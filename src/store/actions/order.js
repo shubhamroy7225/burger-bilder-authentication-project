@@ -12,13 +12,13 @@ export const purchaseBurgerSuccess = ( id, orderData ) => {
 export const purchaseBurgerFail = ( error ) => {
     return {
         type: actionTypes.PURCHASE_BURGER_FAIL,
-        error: error
     };
 }
 
 export const purchaseBurgerStart = () => {
     return {
-        type: actionTypes.PURCHASE_BURGER_START
+        type: actionTypes.PURCHASE_BURGER_START,
+
     };
 };
 
