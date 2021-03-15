@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import Input from "../../components/UI/Input/Input";
 import Button from "../../components/UI/Button/Button";
 import burgerLogo from "../../assets/images/burger-logo.png";
-import Logo from "../../components/Logo/Logo";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import classes from "./Auth.css";
 import * as actions from "../../store/actions/index";
