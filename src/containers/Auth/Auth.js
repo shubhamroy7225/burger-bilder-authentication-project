@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useEffect, useState } from "react";
 import Input from "../../components/UI/Input/Input";
 import Button from "../../components/UI/Button/Button";
 import burgerLogo from "../../assets/images/burger-logo.png";
@@ -9,9 +9,9 @@ import { connect } from "react-redux";
 import { Redirect } from "react-router";
 import { updateObject, checkValidity } from "../../shared/utility";
 
-class Auth extends Component {
-  state = {
-    controls: {
+const auth=(props)=>  {
+
+    const [controls,setControls]=useState({
       email: {
         elementType: "input",
         elementConfig: {
@@ -40,50 +40,50 @@ class Auth extends Component {
         valid: false,
         touched: false,
       },
-    },
-    isSignup: true,
-  };
-  componentDidMount() {
-    if (!this.props.buildingBurger && this.props.authRedirectPath !== "/") {
-      this.props.setAuthRedirectPath();
-    }
-  }
+    })
+    const [isSignup,setIsSignup]=useState(true)
 
-  inputChangedHandler = (event, controlName) => {
-    const updateControls = updateObject(this.state.controls, {
-      [controlName]: updateObject(this.state.controls[controlName], {
+useEffect(()=>{
+  if (!props.buildingBurger && props.authRedirectPath !== "/") {
+    props.setAuthRedirectPath();
+  }
+})
+   
+  
+
+  const inputChangedHandler = (event, controlName) => {
+    const updateControls = updateObject(controls, {
+      [controlName]: updateObject(controls[controlName], {
         value: event.target.value,
         valid: checkValidity(
           event.target.value,
-          this.state.controls[controlName].validation
+         controls[controlName].validation
         ),
         touched: true,
       }),
     });
 
-    this.setState({ controls: updateControls });
+    setControls(updateControls );
   };
 
-  submitHandler = (event) => {
+  const submitHandler = (event) => {
     event.preventDefault();
-    this.props.onAuth(
-      this.state.controls.email.value,
-      this.state.controls.password.value,
-      this.state.isSignup
+    props.onAuth(
+      controls.email.value,
+      controls.password.value,
+      isSignup
     );
   };
-  switchAuthModeHandler = () => {
-    this.setState((prevState) => {
-      return { isSignup: !prevState.isSignup };
-    });
+  const switchAuthModeHandler = () => {
+   return setIsSignup(!isSignup)
   };
 
-  render() {
+
     const formElementsArray = [];
-    for (let key in this.state.controls) {
+    for (let key in controls) {
       formElementsArray.push({
         id: key,
-        config: this.state.controls[key],
+        config: controls[key],
       });
     }
     let form = formElementsArray.map((formElement) => (
@@ -95,38 +95,38 @@ class Auth extends Component {
         invalid={!formElement.config.valid}
         shouldValidate={formElement.config.validation}
         touched={formElement.config.touched}
-        changed={(event) => this.inputChangedHandler(event, formElement.id)}
+        changed={(event) => inputChangedHandler(event, formElement.id)}
       />
     ));
 
-    if (this.props.loading) {
+    if (props.loading) {
       form = <Spinner />;
     }
     let errorMessage = null;
-    if (this.props.error) {
-      errorMessage = <p>{this.props.error.message}</p>;
+    if (props.error) {
+      errorMessage = <p>{props.error.message}</p>;
     }
     let redirectAuth = null;
-    if (this.props.isAuthenticated) {
-      redirectAuth = <Redirect to={this.props.authRedirectPath} />;
+    if (props.isAuthenticated) {
+      redirectAuth = <Redirect to={props.authRedirectPath} />;
     }
     return (
       <div className={classes.Auth}>
         {redirectAuth}
         {errorMessage}
-        <form onSubmit={this.submitHandler}>
+        <form onSubmit={submitHandler}>
           <div className={classes.LoginLogo}>
             <img className={classes.img} src={burgerLogo} alt="MyBurger" />
           </div>
           {form}
           <Button btnType="Success">SUBMIT</Button>
         </form>
-        <Button clicked={this.switchAuthModeHandler} btnType="Danger">
-          SWITCH TO {this.state.isSignup ? "SIGNIN" : "SIGNUP"}
+        <Button clicked={switchAuthModeHandler} btnType="Danger">
+          SWITCH TO {isSignup ? "SIGNIN" : "SIGNUP"}
         </Button>
       </div>
     );
-  }
+  
 }
 const mapStateToProps = (state) => {
   return {
@@ -144,4 +144,4 @@ const mapDispatchToProps = (dispatch) => {
     setAuthRedirectPath: () => dispatch(actions.setRedirectPath("/")),
   };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(Auth);
+export default connect(mapStateToProps, mapDispatchToProps)(auth);
