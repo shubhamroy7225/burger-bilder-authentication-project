@@ -21,7 +21,7 @@ const App = (props) => {
 
   useEffect(() => {
     dispatch(authCheckState());
-  }, []);
+  }, [authCheckState]);
 
   let routes = (
     <Switch>
